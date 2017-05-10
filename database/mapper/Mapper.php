@@ -4,14 +4,18 @@ namespace database\mapper;
 abstract class Mapper
 {
     protected static $PDO;
+    private $filePath = '../../dsn.xml';
 
     public function __construct()
     {
         if(!isset(self::$PDO)) {
+            //echo __DIR__.DIRECTORY_SEPARATOR.'..';
+            $xml = simplexml_load_file($this->filePath);
             //$dsn = \database\base\ApplicationRegistry::getDSN();
-            $dsn = 'mysql:dbname=venue;host=localhost';
-            $user = 'root';
-            $password = 'gainward';
+            $dsn = trim($xml->dsn);
+            //echo $dsn;
+            $user = trim($xml->user);
+            $password = trim($xml->pass);
             if(is_null($dsn)) {
                 throw new \database\base\AppException("Brak DSN");
             }
