@@ -6,6 +6,6 @@ class VenueCollection extends Collection
 {
     public function targetClass()
     {
-        return '\database\domain\Venue';
+        return 'database\domain\Venue';
     }
 }

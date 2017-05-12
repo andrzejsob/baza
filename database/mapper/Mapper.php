@@ -1,6 +1,9 @@
 <?php
 namespace database\mapper;
 
+use database\domain\ObjectWatcher;
+use database\domain\DomainObject;
+
 abstract class Mapper
 {
     protected static $PDO;
@@ -25,6 +28,19 @@ abstract class Mapper
         }
     }
 
+    private function getFromMap($id)
+    {
+        return ObjectWatcher::exists(
+            $this->targetClass(),
+            $id
+        );
+    }
+
+    private function addToMap(DomainObject $obj)
+    {
+        ObjectWatcher::add($obj);
+    }
+
     public function findAll()
     {
         $this->selectAllStmt->execute(array());
@@ -34,6 +50,11 @@ abstract class Mapper
 
     public function find($id)
     {
+        $old = $this->getFromMap($id);
+        if (!is_null($old)) {
+            return $old;
+        }
+        echo "Odczyt wiersza Venue z bazy \n";
         $this->selectStmt->execute(array($id));
         $array = $this->selectStmt->fetch();
         $this->selectStmt()->closeCursor();
@@ -45,17 +66,24 @@ abstract class Mapper
 
     public function createObject($array)
     {
+        $old = $this->getFromMap($array['id']);
+        if (!is_null($old)) {
+            return $old;
+        }
         $obj = $this->doCreateObject($array);
+        $this->addToMap($obj);
         return $obj;
     }
 
-    public function insert(\database\domain\DomainObject $obj)
+    public function insert(DomainObject $obj)
     {
         $this->doInsert($obj);
+        $this->addToMap($obj);
     }
 
-    abstract function update(\database\domain\DomainObject $object);
-    protected abstract function doCreateObject(array $array);
-    protected abstract function doInsert(\database\domain\DomainObject $object);
-    protected abstract function selectStmt();
+    abstract public function update(DomainObject $object);
+    abstract protected function targetClass();
+    abstract protected function doCreateObject(array $array);
+    abstract protected function doInsert(DomainObject $object);
+    abstract protected function selectStmt();
 }

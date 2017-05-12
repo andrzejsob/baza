@@ -1,6 +1,9 @@
 <?php
 namespace database\mapper;
 
+use database\domain\Venue;
+use database\domain\DomainObject;
+
 class VenueMapper extends Mapper
 {
     public function __construct()
@@ -21,14 +24,19 @@ class VenueMapper extends Mapper
         return new VenueCollection($raw, $this);
     }
 
+    protected function targetClass()
+    {
+        return "database\domain\Venue";
+    }
+
     protected function doCreateObject(array $venue)
     {
-        $obj = new \database\domain\Venue($venue['id'], $venue['name']);
+        $obj = new Venue($venue['id'], $venue['name']);
         //$obj->setName($array['name']);
         return $obj;
     }
 
-    protected function doInsert(\database\domain\DomainObject $object)
+    protected function doInsert(DomainObject $object)
     {
         $values = array($object->getName());
         $this->insertStmt->execute($values);
@@ -36,7 +44,7 @@ class VenueMapper extends Mapper
         $object->setId($id);
     }
 
-    public function update(\database\domain\DomainObject $object)
+    public function update(DomainObject $object)
     {
         $values = array($object->getName(), $object->getId());
         $this->updateStmt->execute($values);
