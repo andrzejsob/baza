@@ -31,7 +31,7 @@ class ApplicationRegistry extends Registry
                 $this->mtimes[$key] = 0;
             }
             echo $mtime ." < ? ". $this->mtimes[$key];
-            if($mtime < $this->mtimes[$key]) {
+            if($mtime > $this->mtimes[$key]) {
 
                 $data = file_get_contents($path);
                 $this->mtimes[$key] = $mtime;
