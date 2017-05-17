@@ -40,9 +40,4 @@ class Venue extends DomainObject
     {
         return $this->name;
     }
-
-    public function markDirty()
-    {
-
-    }
 }

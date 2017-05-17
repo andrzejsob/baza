@@ -54,7 +54,7 @@ abstract class Mapper
         if (!is_null($old)) {
             return $old;
         }
-        echo "Odczyt wiersza Venue z bazy \n";
+echo "Odczyt wiersza Venue z bazy \n";
         $this->selectStmt->execute(array($id));
         $array = $this->selectStmt->fetch();
         $this->selectStmt()->closeCursor();
@@ -78,6 +78,7 @@ abstract class Mapper
     public function insert(DomainObject $obj)
     {
         $this->doInsert($obj);
+echo 'Mapper::insert : Wstawiam '.$obj->getName()."\n";
         $this->addToMap($obj);
     }
 

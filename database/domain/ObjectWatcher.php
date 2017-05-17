@@ -4,6 +4,9 @@ namespace database\domain;
 class ObjectWatcher
 {
     private $all = [];
+    private $dirty = [];
+    private $new = [];
+    private $delete = [];
     private static $instance = null;
 
     private function __construct() {}
@@ -37,5 +40,51 @@ class ObjectWatcher
             return $inst->all[$key];
         }
         return null;
+    }
+
+    public static function addDelete(DomainObject $obj)
+    {
+        $self = self::instance();
+        $self->delete[$self->globalKey($obj)] = $obj;
+    }
+
+    public static function addDirty(DomainObject $obj)
+    {
+        $inst = self::instance();
+        if (!in_array($obj, $inst->new, true)) {
+            $inst->dirty[$inst->globalKey($obj)] = $obj;
+        }
+    }
+
+    public static function addNew(DomainObject $obj)
+    {
+        $inst = self::instance();
+        $inst->new[] = $obj;
+    }
+
+    public static function addClean(DomainObject $obj)
+    {
+        $self = self::instance();
+        unset($self->delete[$self->globalKey($obj)]);
+        unset($self->dirty[$self->globalKey($obj)]);
+        $self->new = array_filter(
+            $self->new,
+            function($a) use ($obj)
+            {
+                return !($a === $obj);
+            }
+        );
+    }
+
+    public function performOperations()
+    {
+        foreach ($this->dirty as $key => $obj) {
+            $obj->finder()->update($obj);
+        }
+        foreach ($this->new as $key => $obj) {
+            $obj->finder()->insert($obj);
+        }
+        $this->dirty = array();
+        $this->new = array();
     }
 }

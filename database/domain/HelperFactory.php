@@ -12,4 +12,14 @@ class HelperFactory
             return new $collection();
         }
     }
+
+    public static function getFinder($class)
+    {
+        //$collection = '\\'$class.'Collection';
+        $class = preg_replace('/^.*\\\/', "", $class);
+        $mapper = '\\database\\mapper\\'.$class.'Mapper';
+        if (class_exists($mapper)) {
+            return new $mapper();
+        }
+    }
 }
