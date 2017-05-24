@@ -15,10 +15,11 @@ class Field
 
     public function addTest($operator, $value)
     {
-        $this->comps[] = array('name' => $this->name,
-                               'operator' => $operator,
-                               'value' => $value
-                              );
+        $this->comps[] = array(
+            'name' => $this->name,
+            'operator' => $operator,
+            'value' => $value
+        );
     }
 
     public function getComps()

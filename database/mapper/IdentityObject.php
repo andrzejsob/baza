@@ -59,7 +59,7 @@ class IdentityObject
     {
         $comparisons = array();
         foreach ($this->fields as $field) {
-            $comparisons = array_merge($field->getComps());
+            $comparisons = array_merge($comparisons, $field->getComps());
         }
         return $comparisons;
     }
